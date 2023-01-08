@@ -1,0 +1,305 @@
+import datetime
+import time
+import random
+import os
+import sys
+import pyttsx3
+import pyjokes
+import operator
+import requests
+import instaloader
+import pywikihow
+import speedtest
+import wikipedia
+import webbrowser
+import  pyautogui
+import pywhatkit as  kit
+import speech_recognition as sr
+from requests import get
+from bs4 import BeautifulSoup
+
+
+engine = pyttsx3.init('sapi5')
+voices = engine.getProperty('voices')
+engine.setProperty('voice', voices[1].id)
+engine.setProperty('rate',170)
+
+
+def speak(audio):
+    engine.say(audio)
+    print(audio)
+    engine.runAndWait()
+
+def takecommand():
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+
+        print("Listening.....")
+        r.pause_threshold = 5
+        audio = r.listen(source, timeout=3, phrase_time_limit=5)
+        try:
+            print("Recognizing......")
+            query = r.recognize_google(audio, language='en-in')
+            print(f"user said: {query}")
+        except Exception as e:
+            speak("Sir can you say that again please...")
+            return "none"
+        return query
+
+def wish():
+    hour = int(datetime.datetime.now().hour)
+    tt = time.strftime("%I:%M %p")
+
+    if hour >= 0 and hour <= 12:
+        speak(f"Good Morning, its {tt}")
+    elif hour > 12 and hour < 16:
+        speak(f"Good Afternoon, its {tt}")
+    elif hour > 16 and hour < 20:
+        speak(f"Good Evening, its {tt}")
+    elif hour > 20 and hour < 24:
+        speak(f"Its too late sir, you need rest Good Night sir, its {tt}")
+    speak("I am MARK sir please tell me how can i help you")
+
+def news():
+    main_url = 'https://newsapi.org/v2/top-headlines?sources=techcrunch&apikey=a2ebb917ac7f45c3ab354a793cb19990'
+    main_page = requests.get(main_url).json()
+    articles = main_page["articles"]
+    head = []
+    day = ["first", "second", "third", "fourth", "fifth"]
+    for ar in articles:
+        head.append(ar["title"])
+    for i in range(len(day)):
+        speak(f"today's {day[i]} news is: {head[i]}")
+
+def search_wikihow(query, max_result=10, lang="eng"):
+    return list(pywikihow.WikiHow.search(query, max_result, lang))
+
+def TaskExecution():
+    wish()
+    while True:
+        query = takecommand().lower()
+        permission = takecommand()
+        if "open notepad" in query:
+            speak("okay sir i execute the notepad")
+            npath = "C:\\Windows\\System32\\notepad.exe"
+            os.startfile(npath)
+
+        elif "close notepad" in query:
+            speak("okay sir, closing notepad")
+            os.system("taskkill /f /im notepad.exe")
+
+        elif "open command prompt" in query or "cmd" in query:
+            speak("sure sir")
+            os.system("start command prompt")
+
+        elif "hi mark" in query or "hello" in query:
+            speak("hello sir,")
+        elif "how are you" in query:
+            speak("i am feel good sir, how about you")
+        elif "i am fine" in query or "i am good" in query:
+            speak("oh, i am so good to hear that, so how can i help you")
+        elif "introduce" in query:
+            speak("hello i am MARK the Artificial Intellingence, but my full name is ARC MARK")
+        elif "what are you doing" in query:
+            speak("Nothing special sir, i am always ready to take your commands")
+            cm = takecommand().lower()
+            speak("Thank you sir,")
+
+        elif "play song" in query or "play my song's" in query:
+            speak("okay sir, i play your favorite...")
+            music_dir = "E:\Music"
+            songs = os.listdir(music_dir)
+            rd = random.choice(songs)
+            os.startfile(os.path.join(music_dir, songs[0]))
+
+        elif "wikipedia" in query:
+            speak("searching wikipedia...")
+            try:
+                query = query.replace("wikipedia", "")
+                results = wikipedia.summary(query, sentences=4)
+                speak("according to wikipedia")
+                speak(results)
+            except Exception as e:
+                speak("sorry sir, i can't understand what you want to say me ")
+                pass
+
+        elif "open youtube" in query:
+            speak("okay sir, youtube is open in few secound ")
+            webbrowser.open("youtube.com")
+
+        elif "ip address" in query:
+            ip = get('https://api.ipify.org').text
+            speak(f"your IP address is {ip}")
+
+        elif "open google" in query:
+            speak("sir, what should i search on google")
+            cm = takecommand().lower()
+            webbrowser.open(f"{cm}")
+            speak("here search results")
+
+        elif "open facebook" in query:
+            speak("sure sir")
+            webbrowser.open("facebook.com")
+
+        elif "open instagram" in query:
+            speak("okay sir, i execute your instagram")
+            webbrowser.open("instagram.com")
+
+        elif "send a message" in query:
+            speak("sir your message please")
+            cm = takecommand().lower()
+            kit.sendwhatmsg("+918171125593", f"{cm}", 16, 35)
+            speak("sir your message has been send")
+
+        elif "play youtube song" in query:
+            speak("which song would you like to hear?")
+            cm = takecommand().lower()
+            speak("Nice song... sir i like it :)")
+            kit.playonyt(f"{cm}")
+
+        elif "tell me a joke" in query:
+            joke = pyjokes.get_joke(language='en', category='all')
+            speak(joke)
+
+        elif "shut down pc" in query:
+            os.system("shutdown /s /t 5")
+
+        elif "restart the pc" in query:
+            os.system("shutdown /r /t 5")
+
+        elif "sleep the pc" in query:
+            os.system("rund1132.exe powrprof.d11,SetSuspendState 0,1,0")
+
+        elif 'switch the window' in query:
+            pyautogui.keyDown("alt")
+            pyautogui.press("tab")
+            time.sleep(1)
+            pyautogui.keyUp("alt")
+
+        elif "today's news" in query or "tell me news " in query:
+            speak("please wait sir, feteching the latest news")
+            news()
+
+        elif "do some calculation" in query or "calculate this numerical" in query:
+            r = sr.Recognizer()
+            with sr.Microphone() as source:
+                speak("sir, what you want to calculate...")
+                print("listening...")
+                r.adjust_for_ambient_noise(source)
+                audio = r.listen(source)
+            my_string = r.recognize_google(audio)
+            print(my_string)
+
+
+            def get_operator_fn(op):
+                return {
+                    '+': operator.add,  # plus
+                    '-': operator.sub,  # minus
+                    'x': operator.mul,  # multiplied
+                    'divided': operator.__truediv__,  # devided
+                }[op]
+
+
+            def eval_binary_expr(op1, oper, op2):
+                op1, op2 = int(op1), int(op2)
+                return get_operator_fn(oper)(op1, op2)
+            speak("sir, your answer is")
+            speak(eval_binary_expr(*(my_string.split())))
+
+        elif "where i am" in query or "where we are" in query:
+            speak("wait sir, let me check")
+            try:
+                ipAdd = requests.get('https://api.ipify.org').text
+                print(ipAdd)
+                url = f'https://get.geojs.io/v1/ip/geo/{ipAdd}.json'
+                geo_requests = requests.get(url)
+                geo_data = geo_requests.json()
+                # print(geo_data)
+                city = geo_data['city']
+                country = geo_data['country']
+                speak(f"sir, according you network location we are in {city} city of {country} country")
+
+            except Exception as e:
+                speak("sorry sir, due to network issue i can't find where we are...")
+                pass
+
+        elif "instagram profile" in query or "check instagram account" in query:
+            speak("okay sir, please enter the username")
+            name = input("Enter username here:")
+            webbrowser.open(f"www.instagram.com/{name}")
+            speak(f"sir, here is the profile of the user {name}")
+            time.sleep(5)
+            speak("sir would you like to download profile picture of this account")
+            condition = takecommand().lower()
+            if "yes" in condition:
+                mod = instaloader.Instaloader()
+                mod.download_profile(name, profile_pic_only=True)
+                speak("Done sir, profile picture is saved in our main folder....")
+            else:
+                pass
+
+        elif "take a screenshot" in query or "take screenshot" in query:
+            speak("sir, please tell me the name for this screenshot file")
+            name = takecommand().lower()
+            speak("please sir hold the screen for few seconds, i am taking screenshot")
+            time.sleep(3)
+            img = pyautogui.screenshot()
+            img.save(f"{name}.png")
+            speak("i  am done sir, the screenshot is saved in our main folder... now i  am ready for your next work")
+
+        elif "hide my files" in query or "hide this folder" in query or "visible for everyone" in query:
+            speak("sir, tell me what you want to hide this folder or make it visible for everyone")
+            condition = takecommand().lower()
+            speak("sir, are you sure to hide this folder and files")
+            if "hide" in condition:
+                os.system("attrib +h /s /d")
+                speak("sir, all the files in this folder are now hidden... no one can't see your files")
+
+            elif "visible" in condition:
+                os.system("attrib -h /s /d")
+                speak("sir, all the files in this folder are now visible to everyone... i wish you are taking this decision in your own peace")
+
+            elif "leave it" in condition or "leave now" in condition:
+                speak("okay sir...")
+
+        elif "what's the temperature here" in query or "what's temprature now" in query:
+            search = "temperature in Haridwar"
+            url = f"https://www.google.com/search?q={search}"
+            r = requests.get(url)
+            data = BeautifulSoup(r.text, "html.parser")
+            temp = data.find("div", class_="BNeawe").text
+            speak(f"current {search} is {temp}")
+
+        elif "activate how to do mod" in query:
+            from pywikihow import search_wikihow
+            speak("How to do mode is activated")
+            while True:
+                speak("sir, know tell me what you want to know")
+                how = takecommand()
+                try:
+                    if "exit" in how or "close this mod" in how:
+                        speak("okay sir, mod is close")
+                        break
+                    else:
+                        max_results = 1
+                        how_to = search_wikihow(how, max_results)
+                        assert len(how_to) == 1
+                        print(how_to[0])
+                        speak(how_to[0].summary)
+                except Exception as e:
+                    speak("sorry sir, i am not able to find this")
+
+        elif "what's my internet speed now" in query or "check my network connection" in query:
+            speak("okay sir, please wait i waill check your network speed")
+            try:
+                st = speedtest.Speedtest()
+                dl = st.download()
+                up = st.upload()
+                speak(f"sir, we have {dl} bit per second downloading speed and {up} bit per second uploading speed")
+
+            except Exception as e:
+                speak("sorry sir, due to network problam so, i can't able check your speed")
+
+        elif "ok you can sleep" in query or "thank you" in query or "ok thank's" in query:
+            speak("thanks you sir, it my pleasure and have good day... ")
+            sys.exit()

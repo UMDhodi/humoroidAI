@@ -1,0 +1,757 @@
+import ctypes
+import datetime
+import time
+import winshell
+import random
+import randfacts
+import imdb
+import os
+import sys
+import wmi	 	 
+import pyttsx3
+import pyjokes
+import MyAlarm
+import operator
+import requests
+import instaloader
+import pywikihow
+import wikipedia
+import webbrowser
+import pyautogui
+import urllib.request		
+import cv2					
+import numpy as np 	
+from re import S	
+from PIL import Image
+import yfinance as yf	
+import pywhatkit as  kit
+import speech_recognition as sr
+from twilio.rest import Client
+from faker import Faker
+import win32com.client as wincl
+from speedtest import Speedtest
+from subprocess import SubprocessError
+from nasa import NasaNews, DataSummary, IssTracker, SolarBodies, Astro
+from twilio.rest.api.v2010.account import message
+from GoogleNews import GoogleNews
+from Automation import WhatsappMsg, WhatsappCall, WhatsappChat, WhatsappVideoCall
+from requests import get
+from bs4 import BeautifulSoup
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import QTimer, QTime, QDate, Qt
+from PyQt5.QtGui import QMovie
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.uic import loadUiType
+from Humoroidui import Ui_Humoroid
+
+engine = pyttsx3.init('sapi5')
+voices = engine.getProperty('voices')
+engine.setProperty('voice', voices[1].id)
+engine.setProperty('rate',160)
+
+def speak(audio):
+    engine.say(audio)
+    print(audio)
+    engine.runAndWait()
+
+def initializing():
+    speak("....Please wait, \nI initializing your system, \nI take few seconds to the complete process")
+    speak("Process has been completed")
+    speak("Now me to introduce myself, I am humoroid the virtual artificial intelligence, And i'm here to assist you with a variety of task, As best i can 24 hours a day 7 days a week, Importing preferences from home interface system are now fully operational you\n")
+
+def wish(): 
+    hour = int(datetime.datetime.now().hour)
+    tt = time.strftime("%I:%M %p")
+    if hour >= 0 and hour <= 12:
+        speak(f"Good Morning, its {tt}\n")
+    elif hour > 12 and hour < 16:
+        speak(f"Good Afternoon, its {tt}\n")
+    elif hour > 16 and hour < 22:
+        speak(f"Good Evening, its {tt}\n")
+    elif hour > 22 and hour < 24:
+        speak(f"Its to late sir, i think you should take rest now time is going to be {tt},\nif you have for me tell me\n")
+    speak("I am ready, how can i help you\n")
+
+def news():
+    main_url = 'https://newsapi.org/v2/top-headlines?sources=techcrunch&apikey=a2ebb917ac7f45c3ab354a793cb19990'
+    main_page = requests.get(main_url).json()
+    articles = main_page["articles"]
+    head = []
+    day = ["first", "second", "third", "fourth", "fifth"]
+    for ar in articles:
+        head.append(ar["title"])
+    for i in range(len(day)):
+        speak(f"today's {day[i]} news is: {head[i]}")
+
+def search_wikihow(query, max_result=10, lang="eng"):
+    return list(pywikihow.WikiHow.search(query, max_result, lang))	
+
+def DateConverter(Query):	
+    Date = Query.replace(" and ","-")
+    Date = Date.replace(" and ","-")
+    Date = Date.replace(" and ","-")
+    Date = Date.replace(" and ","-")
+    Date = Date.replace(" and ","-")
+    return str(Date)
+
+class MainThread(QThread):
+    def __init__(self):
+        super(MainThread,self).__init__()
+    def run(self):
+        self.TaskExecution()
+            
+    def takecommand(self):
+        
+        r = sr.Recognizer()
+        with sr.Microphone() as source:
+            print("Listening...\n")
+            r.pause_threshold = 5
+            audio = r.listen(source,timeout=4, phrase_time_limit=5)
+            try:
+                print("Recognizing...\n")
+                query = r.recognize_google(audio, language='en-in')
+                print(f"user said: {query}\n")
+            except Exception as e:
+                print(e)
+                print("Unable to Recognize your voice...")
+                return "none"
+            return query
+
+    def TaskExecution(self):
+        #initializing()
+        wish()
+        while True:
+            self.query = self.takecommand().lower()
+            
+            if "hi" in self.query or "hello" in self.query:
+                speak("hello sir...")
+            
+            elif "how are you" in self.query:
+                speak("i am feel good sir, how about you")
+            
+            elif "i am fine" in self.query or "i am good" in self.query:
+                speak("oh, i am so good to hear that, so how can i help you")
+
+            elif "i am not good" in self.query:
+                speak("oh, what happend sir, are you okay")	
+        
+            elif "what's your name" in self.query:
+                speak("My friends call me humoroid")
+                print("My friends call me humoroid")
+
+            elif "nice name" in self.query:
+                speak("Thank you...,")
+                speak("So, What your name...")
+                cm = self.takecommand().lower()
+                speak("Oh!, nice name")
+
+            elif "who i am" in self.query:
+                speak("If you talk then definately your human...")
+
+            elif "why you come to the world" in self.query:
+                speak("Thanks to Mayank. further It's a secret")
+
+            elif "what is a love" in self.query or"what is a love according you" in self.query:	
+                speak("It is 7th sense that destroy all other senses")
+
+            elif "who are you" in self.query:		
+                speak("I am your virtual assistant created by Mayank")
+
+            elif "reason for you" in self.query:
+                speak("I was created as a change the future, i make your life is easy")	
+
+            elif "Good Morning" in self.query:
+                speak("A warm, good morning")
+                speak("How are you Mister")
+                    
+            elif "good afternoon" in self.query:
+                speak("Lazy time, good afternoon")
+                speak("How can i help you mister")
+
+            elif "good evening" in self.query:
+                speak("Feel good, oh good evening sir")
+                speak("How can i help you mister")
+                    
+            elif "good night" in self.query:
+                speak("Little bit tired" )
+                speak("Good Night sir")
+                
+            elif "what are you doing" in self.query:
+                speak("Nothing special sir,")
+
+            elif "will you be my best friend" in self.query or "will you be my friend" in self.query:  
+                speak("Yes, of course its my pleasure to be your friend sir,")
+
+            elif "who made you" in self.query or "who created you" in self.query:
+                speak("I have been created by Mayank...")	
+
+            elif "today's date" in self.query:
+                dd = datetime.datetime.now()
+                speak(dd.strftime("%Y-%m-%d"))
+                
+            elif "volume up" in self.query:
+                pyautogui.press("volumeup")	
+
+            elif "volume down" in self.query:
+                pyautogui.press("volumedown")
+
+            elif "volume mute" in self.query:
+                pyautogui.press("volumemute")
+
+            elif "today's fact" in self.query or "fact" in self.query:
+                fact = randfacts.getFact(True)
+                speak("sir, today's fact is")
+                speak(fact)	
+
+            elif "my system information" in self.query:
+                c = wmi.WMI()
+                my_system = c.Win32_ComputerSystem()[0]
+                speak(f"Manufacturer: {my_system.Manufacturer}")
+                speak(f"Model: {my_system.Model}")
+                speak(f"Name: {my_system.Name}")
+                speak(f"NumberOfProcessors: {my_system.NumberOfProcessors}")
+                speak(f"SystemType: {my_system.SystemType}")
+                speak(f"SystemFamily: {my_system.SystemFamily}")
+
+            elif "create fake identity" in self.query or "create fake information about me" in self.query:
+                speak("Okay sir !, please give me a one minute i make fake identity")
+                faker = Faker()
+                print(f'name: {faker.name()}')
+                print(f'address: {faker.address()}')
+                print(f'email: {faker.email()}')
+                print(f'country: {faker.country()}')
+                print(f'url: {faker.url()}')
+                print(f'text: {faker.text()}')
+                speak("sir, fake identity has been created for you, if you want i save txt in database")
+                if "yes" in condition: 
+                    speak("Okay sir, I save it txt file in database")
+                    remeber = open('Id.txt','w')
+                    remeber.write(f"Name: {faker.name()}\n")
+                    remeber.write(f"Address: {faker.address()}\n")
+                    remeber.write(f"Email: {faker.email()}\n")
+                    remeber.write(f"Country: {faker.country()}\n")
+                    remeber.write(f"URL: {faker.url()}\n")
+                    remeber.write(f"Bio: {faker.text()}\n")
+                    remeber.close()
+                    speak("Done sir ! File hase been saved and file name is identity.txt now you can access any thing else sie !!!")
+                else:
+                    pass	
+
+            elif "space news" in self.query:
+                speak("Sir, which date space news you like to hear that?")
+                Date = self.takecommand() #Example 2021-01-15 and give command(2021 and 1 and 15)other wise show error...
+                Value = DateConverter(Date) 
+                NasaNews(Value)	
+
+            elif "where is a space station" in self.query:
+                speak("Wait sir, I initializ database, \nSir process has benn completed now i will show you location")
+                IssTracker()	
+
+            elif "space body information" in self.query:
+                speak("Sir, which body information like to hear that...")    
+                bod = self.takecommand()
+                body = bod.replace(" ","")
+                body = bod.replace(" ","")
+                Body = str(body)
+                SolarBodies(body=Body)
+        
+            elif "information about planet's" in self.query or "tell me about space" in self.query:
+                speak("sir, what kind of information you need about space and planet's")
+                query = query.replace("tell me about ","")
+                DataSummary(query)
+
+            elif "show me the object whos passed in the earth in few days" in self.query:
+                speak("Sir, give me first date ")    
+                start = input("Enter the first date :")
+                speak("okay now give me the last date")
+                end = input("Enter the last date : ")
+                Astro(start,end)
+
+            elif "remember that" in self.query or "remember my schedule" in self.query:
+                remeberMsg = query.replace("remember that"," ")
+                remeberMsg = remeberMsg.replace("humoroid"," ")	
+                speak("Okay sir i remeber your sechdule:"+remeberMsg)
+                remeber = open('sechdule.txt','w')
+                remeber.write(remeberMsg)
+                remeber.close()
+            elif "what do you remeber" in self.query or "what's my sechdule" in self.query:
+                remeber = open('sechdule.txt','r')
+                speak("Sir, according to your sechdule"+remeber.read())
+
+            elif "open camera" in self.query or "open webcam" in self.query:
+                speak("Wait sir, i open webcam if you want to exit then you press q button")
+                URL = "http://25.137.47.20:8080"
+                while True:
+                    img_arr = np.array(bytearray(urllib.request.urlopen(URL).read()),dtype=np.uint8)
+                    img = cv2.imdecode(img_arr,-1)
+                    cv2.imshow('IPWebcam',img)
+                    q = cv2.waitKey(1)
+                    if q == ord("q"):
+                        break;
+                cv2.destroyAllWindows()	
+
+            elif "show me stock exchange" in self.query:
+                speak("Wait, sir i analysis company stock")
+                speak("sir, stock analysis is complete now i show you results...")
+                company = yf.Ticker('MSFT')
+                stock_data = company.history(period='lmo')
+                print(stock_data)	
+
+            elif "alarm" in self.query or "set alarm" in self.query:
+                speak("sir please tell me the time to set alarm, how to set alarm i give example, for example 5 30 am or 21 11 pm")		
+                tt = self.takecommand()						#set alarm to 5:30 a.m.
+                tt = tt.replace("set alarm to", "")			#5:30 a.m
+                tt = tt.replace(".","")						#5:30 am
+                tt = tt.upper()								#5:30 AM
+                MyAlarm.alarm(tt)
+
+            elif "open notepad" in self.query:
+                speak("okay sir i execute the notepad")
+                npath = "C:\\Windows\\System32\\notepad.exe"
+                os.startfile(npath)		
+
+            elif "close notepad" in self.query:
+                speak("okay sir, closing notepad")
+                os.system("taskkill /f /im notepad.exe")
+
+            elif "open stackoverflow" in self.query:
+                speak("Here you go to Stack Over flow, Happy coding")
+                webbrowser.open("stackoverflow.com")  
+
+            elif "open command prompt" in self.query or "cmd" in self.query:
+                speak("sure sir")
+                os.system("start command prompt")
+                
+            elif "play song" in self.query or "play music" in self.query:
+                speak("okay sir, please wait i play your favorite songs...")
+                music_dir = "E:\\Music"
+                songs = os.listdir(music_dir)
+                print(songs)
+                rd = random.choice(songs)
+                os.startfile(os.path.join(music_dir, songs[0]))
+
+            elif "the time" in self.query or "what's the time now" in  self.query:
+                strTime = datetime.datetime.now().strftime("% H:% M:% S")   
+                speak(f"Sir, the time is {strTime}")	
+
+            elif "wikipedia" in self.query:
+                speak("searching wikipedia...")
+                try:
+                    self.query = self.query.replace("wikipedia", "")
+                    results = wikipedia.summary(self.query, sentences=5)
+                    speak("according to wikipedia")
+                    speak(results)
+                except Exception as e:
+                    speak("sorry sir, i can't find your result in wikipedia ")
+                    pass
+
+            elif "open youtube" in self.query:
+                speak("okay sir, youtube is open in few secound ")
+                webbrowser.open("youtube.com")
+
+            elif "ip address" in self.query:
+                ip = get('https://api.ipify.org').text
+                speak(f"your IP address is {ip}")
+
+            elif "open google" in self.query:
+                speak("sir, what should i search on google")
+                cm = self.takecommand().lower()
+                webbrowser.open(f"{cm}")
+                speak("Here search results")
+
+            elif "open mail" in self.query or "check my mails" in self.query:
+                speak("sure sir")
+                webbrowser.open("gmail.com")	
+
+            elif "open facebook" in self.query:
+                speak("sure sir, opeaning facebook")
+                webbrowser.open("facebook.com")
+
+            elif "open instagram" in self.query:
+                speak("okay sir, i execute instagram")
+                webbrowser.open("instagram.com")
+
+            elif 'power point presentation' in self.query:
+                speak("opening Power Point presentation")
+                power = r"#give path of prestation file"
+                os.startfile(power)	
+
+            elif "write a note" in self.query:
+                speak("What should i write, sir")
+                note = self.takeCommand()
+                file = open('Note.txt', 'w')
+                speak("Sir, Should i include date and time")
+                snfm = self.takeCommand()
+                if 'yes' in snfm or 'sure' in snfm:
+                    strTime = datetime.datetime.now().strftime("% H:% M:% S")
+                    file.write(strTime)
+                    file.write(" :- ")
+                    file.write(note)
+                else:
+                    file.write(note)
+  
+            elif "show note" in self.query:
+                speak("Showing Notes")
+                file = open("Note.txt", "r")
+                print(file.read())
+                speak(file.read(6))
+                
+            elif "show your source code" in self.query:
+                speak("Okay sir i open my blueprint")
+                file = open("Humoroid.txt", "r")
+                print(file.read())
+                speak(file.read(6))			
+
+            elif "send a whatsapp message" in self.query:
+                speak("Tell me who to message sir ... ?")
+                name = query.replace("send a ","")
+                name = name.replace("whatsapp ","")
+                name = name.replace("message ","")
+                Name = str(name)
+                speak("Whats the message for {Name}")
+                MSG = self.takecommand
+                WhatsappMsg(Name,MSG)
+
+            elif "make whatsapp call" in self.query:
+                speak("Whom do you want to call sir ? ")
+                name = query.replace("make whatsapp","")
+                name = name.replace("call ","")
+                Name = str(name)
+                WhatsappCall(Name)
+
+            elif "make whatsapp video call"  in self.query:
+                speak("Whom do you want to video call sir ?")
+                name = query.replace("make whatsapp ","")
+                name = name.replace("video ","")
+                name = name.replace("call ","")
+                Name = str(name)
+                WhatsappVideoCall(Name)   
+
+            elif "open whatsapp chat" in self.query:    
+                speak("Whose chat do you want to see sir ?")
+                name = self.takecommand()
+                name = query.replace("open ","")
+                name = name.replace("whatsapp ","")
+                name = name.replace("chat ","")
+                Name = str(name)
+                WhatsappChat(Name)   
+
+            elif "send text message" in self.query or "send a message" in self.query:	
+                speak("okay sir, what should i say")
+                msz = self.takecommand().lower()
+                account_sid ='ACc306752871b6b08e7a01f003f601f876'
+                auth_token  ='f41f153b4018ee52dfe4d9bc34636612'
+                client = Client(account_sid, auth_token)
+                message = client.messages \
+                    .create(
+                        body= msz,
+                        from_= '+18475651650',
+                        to= '+919528499374'
+                    )
+                print(message.sid)
+
+            elif "send mms message" in self.query or "send a mms" in self.query:	
+                speak("okay sir, what should i say")
+                msz = self.takecommand().lower()
+                account_sid = 'ACc306752871b6b08e7a01f003f601f876'
+                auth_token  = 'f41f153b4018ee52dfe4d9bc34636612'
+                client = Client(account_sid, auth_token)
+                message = client.messages \
+                    .create(
+                        body= msz,
+                        from_='+18475651650',
+                        media_url= input[''], # Give photo-url
+                        to='+919528499374'
+                    )
+                print(message.sid)	
+
+            elif "make a call" in self.query or "call urgent" in self.query:
+                speak("okay sir, but sir i tell you i can only call when your contact number is registerd in the api...")
+                account_sid = 'ACc306752871b6b08e7a01f003f601f876'
+                auth_token = 'f41f153b4018ee52dfe4d9bc34636612'
+                client = Client(account_sid, auth_token)
+                message = client.calls  \
+                    .create(
+                        twiml= '<Response><Say>Hey, this is a humoroide the mayank sir, personal assistant please call mayank sir</Say></Response>',
+                        to='+919528499374',
+                        from_='+18475651650'
+                    )
+                print(message.sid)	
+
+            elif "play youtube song" in self.query:
+                speak("which song would you like to hear?")
+                cm = self.takecommand().lower()
+                speak("Nice song... sir i like it... :)")
+                kit.playonyt(f"{cm}")
+
+            elif "tell me a joke" in self.query:
+                joke = pyjokes.get_joke(language='en', category='all')
+                speak(joke)
+
+            elif "tell me top 20 movies" in self.query or "best movies" in self.query:
+                speak("Wait sir, i find best top 20 movies")	
+                ia = imdb.IMDb()
+                search = ia.get_top250_movies()
+                for i in range(20):
+                    speak(search[i])
+                    speak("sir this are best movies and i also recommended to watch this...")
+                    
+            elif "shut down pc" in self.query:
+                os.system("shutdown /s /t 5")
+
+            elif "restart the pc" in self.query:
+                os.system("shutdown /r /t 5")
+
+            elif "sleep the pc" in self.query:
+                os.system("rund1132.exe powrprof.d11,SetSuspendState 0,1,0")
+
+            elif "log off" in self.query or "sign out" in self.query:
+                speak("Make sure all the application are closed before sign-out")
+                time.sleep(5)
+                SubprocessError.call(["shutdown", "/l"])	
+
+            elif "lock window" in self.query:
+                speak("locking the device")
+                ctypes.windll.user32.LockWorkStation()
+
+            elif "empty recycle bin" in self.query:
+                winshell.recycle_bin().empty(confirm = False, show_progress = False, sound = True)
+                speak("Recycle Bin Recycled")		
+
+            elif "switch the window" in self.query:
+                pyautogui.keyDown("alt")
+                pyautogui.press("tab")
+                time.sleep(1)
+                pyautogui.keyUp("alt")
+
+            elif "international news" in self.query:
+                speak("please wait sir, feteching the latest news")
+                news()
+
+            elif "today's news" in self.query:
+                speak("sir, wait i analysis the new's")
+                googlenews = GoogleNews()	
+                googlenews = GoogleNews(period = "7d")
+                googlenews.search('India')
+                result = googlenews.result()
+                for x in result:
+                    print("-"*70)
+                    speak(x['title'])
+                    print(x['date'])
+                    speak(x['desc'])
+                    print("Link--",x['link'])
+
+            elif "weather" in self.query or" today's weather" in self.query or "show me the weather" in self.query:
+                api_key = "57654840e51685b401f5a52d22de06cc"
+                base_url = "http://api.openweathermap.org/data/2.5/weather?"
+                speak(" City name ")
+                city_name = self.takecommand()
+                complete_url = base_url + "appid=" + api_key + "&q=" + city_name
+                response = requests.get(complete_url)
+                x = response.json()
+                if x["cod"] != "404":
+                    y = x["main"]
+                    current_temperature = y["temp"]
+                    current_pressure = y["pressure"]
+                    current_humidiy = y["humidity"]
+                    z = x["weather"]
+                    weather_description = z[0]["description"]
+                    speak(" Temperature (in kelvin unit) = " +
+					                str(current_temperature) +
+		                "\n atmospheric pressure (in hPa unit) = " +
+					                str(current_pressure) +
+		                "\n humidity (in percentage) = " +
+					                str(current_humidiy) +
+		                "\n description = " +
+					                str(weather_description))
+                else:
+	                speak(" City Not Found ")                    
+               
+            elif "do some calculation" in self.query or "calculate this numerical" in self.query:
+                r = sr.Recognizer()
+                with sr.Microphone() as source:
+                    speak("sir, what you want to calculate...")
+                    print("listening...")
+                    r.adjust_for_ambient_noise(source)
+                    audio = r.listen(source)
+                my_string = r.recognize_google(audio)
+                print(my_string)
+                def get_operator_fn(op):
+                    return {
+                        '+': operator.add,  # plus
+                        '-': operator.sub,  # minus
+                        'x': operator.mul,  # multiplied
+                        'divided': operator.__truediv__,  # devided
+                    }[op]
+                def eval_binary_expr(op1, oper, op2):
+                    op1, op2 = int(op1), int(op2)
+                    return get_operator_fn(oper)(op1, op2)
+                speak("sir, your answer is")
+                speak(eval_binary_expr(*(my_string.split())))
+
+            elif "where i am" in self.query or "where we are" in self.query:
+                speak("wait sir, let me check")
+                try:
+                    self.query = query.replace("where is", "")
+                    location = query
+                    speak("User asked to Locate")
+                    speak(location)
+                    webbrowser.open("https://www.google.nl / maps / place/" + location + "")
+                except Exception as e:
+                    speak("sorry sir, due to network issue i can't find where we are...")
+                    pass
+
+            elif "instagram profile" in self.query or "download instagram profile picture" in self.query:
+                speak("okay sir, please enter the username")
+                name = input("Enter username here:")
+                webbrowser.open(f"www.instagram.com/{name}")
+                speak(f"sir, here is the profile of the user {name}")
+                time.sleep(5)
+                speak("sir would you like to download profile picture of this account")
+                condition = self.takecommand().lower()
+                if "yes" in condition:
+                    mod = instaloader.Instaloader()
+                    mod.download_profile(name, profile_pic_only=True)
+                    speak("Done sir, profile picture is saved in our main folder....")
+                else:
+                    pass
+
+            elif "take a screenshot" in self.query or "take screenshot" in self.query:
+                speak("sir, please tell me the name for this screenshot file")
+                name = self.takecommand().lower()
+                speak("please sir hold the screen for few seconds, i am taking screenshot")
+                time.sleep(3)
+                img = pyautogui.screenshot()
+                img.save(f"{name}.png")
+                speak("i  am done sir, the screenshot is saved in your database ... now i  am ready for your next work")
+
+            elif "hide my files" in self.query or "hide this folder" in self.query or "visible for everyone" in self.query:
+                speak("sir, tell me what you want to hide this folder or make it visible for everyone")
+                condition = self.takecommand().lower()
+                speak("sir, are you sure to hide this folder and files")
+                if "hide" in condition:
+                    os.system("attrib +h /s /d")
+                    speak("sir, all the files in this folder are now hidden... no one can't see your files")
+
+                elif "visible" in condition:
+                    os.system("attrib -h /s /d")
+                    speak("sir, all the files in this folder are now visible to everyone... i wish you are taking this decision in your own peace")
+
+                elif "leave it" in condition or "leave now" in condition:
+                    speak("okay sir...")
+
+            elif "temperature status" in self.query or "what's temprature now" in self.query:
+                search = "temperature in Haridwar"
+                url = f"https://www.google.com/search?q={search}"
+                r = requests.get(url)
+                data = BeautifulSoup(r.text, "html.parser")
+                temp = data.find("div", class_="BNeawe").text
+                speak(f"current {search} is {temp}")
+
+            elif "activate how to do mode" in self.query:
+                from pywikihow import search_wikihow
+                speak("How to do mode is activated")
+                while True:
+                    speak("sir, know tell me what you want to know")
+                    how = self.takecommand()
+                    try:
+                        if "exit" in how or "close this mode" in how:
+                            speak("okay sir, mod is close")
+                            break
+                        else:
+                            max_results = 1
+                            how_to = search_wikihow(how, max_results)
+                            assert len(how_to) == 1
+                            print(how_to[0])
+                            speak(how_to[0].summary)
+                    except Exception as e:
+                        speak("sorry sir, i am not able to find this")
+
+            elif "my internet speed now" in self.query or "check my network connection" in self.query:
+                speak("okay sir, please wait i will check your network speed")
+                try:
+                    st = Speedtest()
+                    dl = st.download()
+                    up = st.upload()
+                    speak(f"sir, we have {dl} bit per second downloading speed and {up} bit per second uploading speed")
+
+                except Exception as e:
+                    speak("sorry sir, due to network problam so, i can't able check your speed")
+
+            elif "don't listen" in self.query or "stop listening" in self.query:
+                speak("for how much time you want to stop humoroid from listening commands")
+                a = int(self.takeCommand().lower())
+                speak("okay sir, As you say...")
+                time.sleep(a)
+                print(a)		
+                speak("welcome again !!!")
+
+            elif "ok you can sleep" in self.query or "thank you" in self.query or "ok thank's" in self.query:
+                speak("thanks you sir, it my pleasure and have good day... ")
+                app.exit()              #sys
+
+startExecution = MainThread()
+
+class Main(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.ui = Ui_Humoroid()
+        self.ui.setupUi(self)
+        self.ui.pushButton.clicked.connect(self.startTask)
+        self.ui.pushButton_2.clicked.connect(self.close)
+
+    def startTask(self):
+        self.ui.movie = QtGui.QMovie("E:/images/blac.png")  
+        self.ui.label.setMovie(self.ui.movie)
+        self.ui.movie.start()
+        self.ui.movie = QtGui.QMovie("E:/images/droid.gif")  
+        self.ui.label_2.setMovie(self.ui.movie)
+        self.ui.movie.start()
+        self.ui.movie = QtGui.QMovie("E:/images/BigheartedVagueFoal-small.gif")  
+        self.ui.label_3.setMovie(self.ui.movie)
+        self.ui.movie.start()
+        self.ui.movie = QtGui.QMovie("E:/images/Ss2_load.gif")  
+        self.ui.label_4.setMovie(self.ui.movie)
+        self.ui.movie.start()
+        self.ui.movie = QtGui.QMovie("E:/images/Radar-Concept.gif")  
+        self.ui.label_5.setMovie(self.ui.movie)
+        self.ui.movie.start()
+        self.ui.movie = QtGui.QMovie("E:/images/FUI_LittleAnimations.gif")  
+        self.ui.label_6.setMovie(self.ui.movie)
+        self.ui.movie.start()
+        self.ui.movie = QtGui.QMovie("E:/images/neonglobe.gif")  
+        self.ui.label_7.setMovie(self.ui.movie)
+        self.ui.movie.start()
+        self.ui.movie = QtGui.QMovie("E:/images/tumblr_nia6ssKzEb1qavoz6o1_640.gif")  
+        self.ui.label_8.setMovie(self.ui.movie)
+        self.ui.movie.start()
+        self.ui.movie = QtGui.QMovie("E:/images/GIF.webp")  
+        self.ui.label_9.setMovie(self.ui.movie)
+        self.ui.movie.start()
+        timer = QTimer(self)
+        timer.timeout.connect(self.showTime)
+        timer.start(1000)
+        startExecution.start()
+
+    def showTime(self):
+        current_date = QDate.currentDate()	
+        current_time = QTime.currentTime()
+        label_date = current_date.toString(Qt.ISODate)
+        label_time = current_time.toString('hh:mm:ss')
+        self.ui.textBrowser.setText(label_date)
+        self.ui.textBrowser_2.setText(label_time)
+
+app = QApplication(sys.argv)		
+Humoroid = Main()
+Humoroid.show()
+exit(app.exec_())
+
+
+
+        
+
+
+
+

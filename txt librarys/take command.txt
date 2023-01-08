@@ -1,0 +1,80 @@
+**************************************************************************************************************************************************************
+								Speech recognizer module
+**************************************************************************************************************************************************************
+
+def takeCommand():
+    # It takes microphones recognition from the user and returns String output
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Listening...")
+        r.pause_threshold = 0.8   	*(r.listen(source,timeout=2) *(audio = r.listen(source, phrase_time_limit=5))
+        audio = r.listen(source)
+
+    try:
+        print("Recognizing...")
+        query = r.recognize_google(audio,language='en-in')
+        print(f"User said:{query}\n")
+
+    except Exception as e:
+        # print(e)
+        print("Say that again please")
+        return "None"
+    return query
+
+**************************************************************************************************************************************************************
+
+def takecommand():
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("listening...")
+        r.pause_threshold = 1
+        r.adjust_for_ambient_noise(source)
+        audio = r.listen(source)
+    try:
+        print("recognizing...")
+        query = r.recognize_google(audio,language = "en-in")
+        print(f"user said:{query}\n")
+    except Exception as e:
+        speak("sorry sir i did not got that")
+
+
+**************************************************************************************************************************************************************************
+
+def takecommand():
+	r = sr.Recognizer()
+	with sr.Microphone() as source:
+		print("Listening...")
+		r.pause_threshold = 5
+		audio = r.listen(source,timeout=4, phrase_time_limit=5)
+		try:
+			print("Recognizing...")
+			query = r.recognize_google(audio, language='en-in')
+			print(f"user said: {query}")
+		except Exception as e:
+			speak("Sir can you say that again please...")
+			return "none"
+		return query
+*************************************************************************************************************************************************************
+									Presend function
+*************************************************************************************************************************************************************
+
+
+	def takecommand(self):
+		r = sr.Recognizer()
+		with sr.Microphone(device_index=2) as source:
+			print("Listening...")
+			r.pause_threshold = 0.8 
+			r.adjust_for_ambient_noise(source)
+			audio = r.listen(source)
+			#audio = r.listen(source,timeout=4, phrase_time_limit=5)
+
+			try:
+				print("Recognizing...")
+				query = r.recognize_google(audio, language='en-in')
+				print(f"user said: {query}\n")
+
+			except Exception as e:
+				print("Something wrong ! please say that again...")
+				return "none"
+			query = query.lower()	
+			return query	
